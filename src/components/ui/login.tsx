@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "./use-toast";
@@ -67,6 +68,11 @@ export function LoginForm({ className }: LoginProperties) {
       password: "",
     },
   });
+
+  const searchParameters = useSearchParams();
+  const callbackUrl = searchParameters.get("callbackUrl") || "/profile";
+
+  console.log({ callbackUrl });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     toast({
