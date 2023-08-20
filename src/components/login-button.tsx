@@ -9,5 +9,13 @@ interface LoginButtonProperties {
 }
 
 export function LoginButton({ children }: LoginButtonProperties) {
-  return <Button onClick={() => signIn()}>{children}</Button>;
+  return (
+    <Button
+      onClick={() =>
+        signIn("credentials", { username: "jsmith", password: "1234" })
+      }
+    >
+      {children}
+    </Button>
+  );
 }

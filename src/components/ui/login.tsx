@@ -17,6 +17,7 @@ import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "./use-toast";
+import { signIn } from "next-auth/react";
 
 interface LoginProperties {
   className?: string;
@@ -36,27 +37,9 @@ const formSchema = z.object({
     })
     .refine(
       (value) => {
-        return /[a-z]/.test(value);
-      },
-      { message: "Password must contain at least one lowercase letter." },
-    )
-    .refine(
-      (value) => {
-        return /[A-Z]/.test(value);
-      },
-      { message: "Password must contain at least one uppercase letter." },
-    )
-    .refine(
-      (value) => {
         return /\d/.test(value);
       },
       { message: "Password must contain at least one number." },
-    )
-    .refine(
-      (value) => {
-        return /[^\dA-Za-z]/.test(value);
-      },
-      { message: "Password must contain at least one symbol." },
     ),
 });
 
@@ -74,17 +57,46 @@ export function LoginForm({ className }: LoginProperties) {
 
   console.log({ callbackUrl });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">
-            {JSON.stringify(values, undefined, 2)}
-          </code>
-        </pre>
-      ),
-    });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await signIn("credentials", {
+        email: values.username,
+        password: values.password,
+        redirect: false,
+        callbackUrl,
+      });
+
+      toast({
+        title: "You submitted the following values:",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">
+              {JSON.stringify(values, undefined, 2)}
+            </code>
+          </pre>
+        ),
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return error.errors.forEach((error) => {
+          toast({
+            title: "An error occurred.",
+            description: error.message,
+          });
+        });
+      }
+      if (error instanceof Error) {
+        toast({
+          title: "An error occurred.",
+          description: error.message,
+        });
+      } else {
+        toast({
+          title: "An error occurred.",
+          description: "An unknown error occurred.",
+        });
+      }
+    }
   }
 
   return (

@@ -1,10 +1,11 @@
 import Link from "next/link";
 
-import { siteConfig } from "@/config/site";
-import { buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { MainNav } from "@/components/main-nav";
 import { ModeToggle } from "@/components/mode-toggle";
+import { buttonVariants } from "@/components/ui/button";
+import { UserMenu } from "@/components/user-menu";
+import { siteConfig } from "@/config/site";
 
 export function SiteHeader() {
   return (
@@ -44,6 +45,7 @@ export function SiteHeader() {
               </div>
             </Link>
             <ModeToggle />
+            <UserMenu />
           </nav>
         </div>
       </div>
