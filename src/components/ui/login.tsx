@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "./use-toast";
@@ -52,19 +52,27 @@ export function LoginForm({ className }: LoginProperties) {
     },
   });
 
+  const router = useRouter();
   const searchParameters = useSearchParams();
-  const callbackUrl = searchParameters.get("callbackUrl") || "/profile";
+  const callbackUrl = searchParameters.get("callbackUrl") || "/";
 
   console.log({ callbackUrl });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await signIn("credentials", {
+      const signInResponse = await signIn("credentials", {
         email: values.username,
         password: values.password,
         redirect: false,
         callbackUrl,
       });
+
+      console.log({ signInResponse });
+
+      if (signInResponse?.ok) {
+        router.push(callbackUrl);
+        router.refresh();
+      }
 
       toast({
         title: "You submitted the following values:",

@@ -25,11 +25,21 @@ export async function POST(request: Request) {
         email: user.email,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
+    if (error instanceof Error) {
+      return new NextResponse(
+        JSON.stringify({
+          status: "error",
+          message: error.message,
+        }),
+        { status: 500 },
+      );
+    }
+
     return new NextResponse(
       JSON.stringify({
         status: "error",
-        message: error.message,
+        message: "Something went wrong",
       }),
       { status: 500 },
     );
