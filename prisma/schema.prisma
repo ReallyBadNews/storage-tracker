@@ -43,9 +43,9 @@ model Item {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   storageBinId String?
-  storageBin   StorageBin? @relation(fields: [storageBinId], references: [id])
+  storageBin   StorageBin? @relation(fields: [storageBinId], references: [id], onDelete: Cascade)
   locationId   String?
-  location     Location?   @relation(fields: [locationId], references: [id])
+  location     Location?   @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@index([storageBinId])
   @@index([locationId])
@@ -53,9 +53,9 @@ model Item {
 
 model Location {
   id          String       @id @default(cuid())
-  name        String
-  location    String
-  capacity    Int
+  name        String       @db.VarChar(255)
+  location    String       @db.VarChar(255)
+  capacity    Int          @db.Int()
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   image       String?
