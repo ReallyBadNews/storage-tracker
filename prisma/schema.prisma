@@ -12,35 +12,55 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  name     String
-  email    String  @unique
-  password String
-  image    String?
-  role     String  @default("USER")
+  id       String   @id @default(cuid())
+  name     String   @db.VarChar(255)
+  email    String   @unique @db.VarChar(255)
+  password String   @db.VarChar(255)
+  image    String?  @db.Text()
+  role     UserRole @default(USER)
 }
 
 model StorageBin {
-  id        String   @id @default(uuid())
-  name      String
-  location  String
-  capacity  Int
-  items     Item[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(cuid())
+  name       String    @unique @db.VarChar(255)
+  capacity   Int       @db.Int()
+  image      String?   @db.Text()
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  items      Item[]
+  locationId String?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  @@index([locationId])
 }
 
 model Item {
-  id           String     @id @default(uuid())
-  name         String
-  description  String
-  quantity     Int
-  storageBinId String
-  storageBin   StorageBin @relation(fields: [storageBinId], references: [id])
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id           String      @id @default(cuid())
+  name         String      @unique @db.VarChar(255)
+  description  String      @db.VarChar(255)
+  quantity     Int         @db.Int()
+  image        String?     @db.Text()
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  storageBinId String?
+  storageBin   StorageBin? @relation(fields: [storageBinId], references: [id])
+  locationId   String?
+  location     Location?   @relation(fields: [locationId], references: [id])
 
   @@index([storageBinId])
+  @@index([locationId])
+}
+
+model Location {
+  id          String       @id @default(cuid())
+  name        String
+  location    String
+  capacity    Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  image       String?
+  items       Item[]
+  storageBins StorageBin[]
 }
 
 enum UserRole {
