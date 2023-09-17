@@ -86,12 +86,19 @@ export function LoginForm({ className }: LoginProperties) {
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return error.errors.forEach((error) => {
+        for (const issue of error.errors) {
           toast({
             title: "An error occurred.",
-            description: error.message,
+            description: issue.message,
           });
-        });
+        }
+
+        for (const issue of error.issues) {
+          toast({
+            title: "An error occurred.",
+            description: issue.message,
+          });
+        }
       }
       if (error instanceof Error) {
         toast({
