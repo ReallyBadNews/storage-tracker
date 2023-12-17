@@ -26,13 +26,15 @@ export const RegisterForm = () => {
         },
       });
 
-      setLoading(false);
       if (!response.ok) {
-        setError((await response.json()).message);
+        const { error } = (await response.json()) as { error: string };
+        setError(error);
         return;
       }
 
       await signIn(undefined, { callbackUrl: "/" });
+
+      setLoading(false);
     } catch (error) {
       setLoading(false);
 
