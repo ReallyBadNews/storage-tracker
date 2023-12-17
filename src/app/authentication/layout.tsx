@@ -1,6 +1,3 @@
-import { siteConfig } from "@/config/site";
-import Link from "next/link";
-
 export default function AuthLayout({
   children,
 }: {

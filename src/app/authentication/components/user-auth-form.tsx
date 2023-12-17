@@ -19,10 +19,9 @@ export function UserAuthForm({
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+    // add artificial delay of 1 second
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setIsLoading(false);
   }
 
   return (
